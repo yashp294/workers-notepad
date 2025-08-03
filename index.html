@@ -2,77 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Workers' Notepad</title>
   <link rel="stylesheet" href="style.css" />
-  <script type="module" src="main.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="logo">🗒️ Workers' Notepad</div>
-    <div class="actions">
-      <button id="themeToggle">🌓</button>
-      <button id="loginBtn">Login</button>
-      <button id="logoutBtn" style="display:none;">Logout</button>
-    </div>
+    <h1>🗒️ Workers' Notepad</h1>
+    <button id="themeToggle">🌓</button>
   </header>
 
+  <aside id="sidebar">
+    <button id="newNote">+ New Note</button>
+    <ul id="noteList"></ul>
+  </aside>
+
   <main>
-    <textarea id="noteArea" placeholder="Start typing your note..."></textarea>
+    <input id="noteTitle" placeholder="Note Title..." />
+    <textarea id="noteContent" placeholder="Start typing..."></textarea>
   </main>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpkf1c08uJtKkQ7WvhmBusUM4KxlOOwVA",
-      authDomain: "workersnotepad.firebaseapp.com",
-      projectId: "workersnotepad",
-      storageBucket: "workersnotepad.appspot.com",
-      messagingSenderId: "3697329656",
-      appId: "1:3697329656:web:268fb6317a357cb11d020d",
-      measurementId: "G-4R6X2L6FMD"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const noteArea = document.getElementById("noteArea");
-
-    loginBtn.onclick = async () => {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (e) {
-        alert("Login failed.");
-      }
-    };
-
-    logoutBtn.onclick = async () => {
-      await signOut(auth);
-    };
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-        const noteRef = doc(db, "notes", user.uid);
-        const noteSnap = await getDoc(noteRef);
-        if (noteSnap.exists()) noteArea.value = noteSnap.data().content;
-        noteArea.oninput = () =>
-          setDoc(noteRef, { content: noteArea.value });
-      } else {
-        loginBtn.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-        noteArea.value = "";
-      }
-    });
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
